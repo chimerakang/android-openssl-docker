@@ -28,18 +28,21 @@ RUN mkdir /Android && cd Android && mkdir output
 WORKDIR /Android
 
 RUN wget http://dl.google.com/android/android-sdk_r24.3.3-linux.tgz
+RUN wget https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip
 RUN wget http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
 
 # Extracting ndk/sdk
+RUN apt-get install -y unzip
 
 RUN tar -xvzf android-sdk_r24.3.3-linux.tgz && \
+	unzip android-ndk-r14b-linux-x86_64.zip && \
 	chmod a+x android-ndk-r10e-linux-x86_64.bin && \
 	7z x android-ndk-r10e-linux-x86_64.bin
-
 
 # Set ENV variables
 
 ENV ANDROID_HOME /Android/android-sdk-linux
+#ENV NDK_ROOT /Android/android-ndk-r14b
 ENV NDK_ROOT /Android/android-ndk-r10e
 ENV PATH $PATH:$ANDROID_HOME/tools
 ENV PATH $PATH:$ANDROID_HOME/platform-tools
@@ -53,8 +56,8 @@ ENV SYSROOT $TOOLCHAIN/sysroot
 ENV PATH $PATH:$TOOLCHAIN/bin:$SYSROOT/usr/local/bin
 
 # Configure toolchain path
-# armv7 arm64-v8a
-ENV ARCH arm64-v8a
+# armv7 aarch64
+ENV ARCH armv7
 
 #ENV CROSS_COMPILE arm-linux-androideabi
 ENV CC arm-linux-androideabi-clang
@@ -86,7 +89,7 @@ ENV CPPFLAGS -mthumb -mfloat-abi=softfp -mfpu=vfp -march=$ARCH  -DANDROID
 
 RUN curl -O https://www.openssl.org/source/old/1.0.2/openssl-1.0.2n.tar.gz && \
 	tar -xzf openssl-1.0.2n.tar.gz
-RUN ls && cd openssl-1.0.2n && ./Configure android-arm64-v8a no-asm  --static --with-zlib-include=/Android/zlib/include --with-zlib-lib=/Android/zlib/lib && \
+RUN ls && cd openssl-1.0.2n && ./Configure android-armv7 no-asm  --static --with-zlib-include=/Android/zlib/include --with-zlib-lib=/Android/zlib/lib && \
 	make build_crypto build_ssl -j 4 && ls && cp libcrypto.a /Android/output && cp libssl.a /Android/output 
 RUN cp -r openssl-1.0.2n /Android/output/openssl
 
