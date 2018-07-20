@@ -1,13 +1,13 @@
 # THIS DOCKERFILE TRIES TO COMPILE CURL/OPENSSL FOR ANDROID
 #
-# 5 july 2015
+# 20 july 2018
 #
 # More detals could be found here: 
 # http://vitiy.info/dockerfile-example-to-compile-libcurl-for-android-inside-docker-container/
  
 FROM ubuntu
 
-MAINTAINER Victor Laskin "victor.laskin@gmail.com"
+MAINTAINER Chimera Kang "chimerakang@gmail.com"
 
 # Install compilation tools
 
@@ -86,7 +86,7 @@ ENV CPPFLAGS -mthumb -mfloat-abi=softfp -mfpu=vfp -march=$ARCH  -DANDROID
 
 RUN curl -O https://www.openssl.org/source/old/1.0.2/openssl-1.0.2n.tar.gz && \
 	tar -xzf openssl-1.0.2n.tar.gz
-RUN ls && cd openssl-1.0.2n && ./Configure android-armv7 no-asm no-shared --static --with-zlib-include=/Android/zlib/include --with-zlib-lib=/Android/zlib/lib && \
+RUN ls && cd openssl-1.0.2n && ./Configure android-arm64-v8a no-asm  --static --with-zlib-include=/Android/zlib/include --with-zlib-lib=/Android/zlib/lib && \
 	make build_crypto build_ssl -j 4 && ls && cp libcrypto.a /Android/output && cp libssl.a /Android/output 
 RUN cp -r openssl-1.0.2n /Android/output/openssl
 
